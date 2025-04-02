@@ -7,11 +7,6 @@ This project is a Django-based note-taking app with CRUD operations, including t
 - Tag notes with relevant tags
 - List and detail views for notes
 
-## Requirements
-- Python 3.x
-- Django 5.x
-- PostgreSQL (or SQLite)
-
 ## Setup
 1. Clone the repository
 2. Install dependencies: `pip install -r requirements.txt`
