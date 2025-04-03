@@ -33,9 +33,9 @@ class NotesDetailAPIView(APIView):
         serializer = NotesDetailSerializer(note)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, pk, format=None):
+    def put(self, request, note_id, format=None):
         try:
-            note = NotesModel.objects.get(pk=pk)
+            note = NotesModel.objects.get(id=note_id)
         except NotesModel.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -45,9 +45,9 @@ class NotesDetailAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, note_id, format=None):
         try:
-            note = NotesModel.objects.get(pk=pk)
+            note = NotesModel.objects.get(id=note_id)
         except NotesModel.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
