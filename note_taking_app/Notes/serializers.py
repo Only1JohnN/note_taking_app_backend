@@ -14,7 +14,7 @@ class NotesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NotesModel
-        fields = ['id', 'title', 'truncated_body', 'tags']
+        fields = ['id', 'title', 'body', 'truncated_body', 'tags']
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])

@@ -32,7 +32,7 @@ class NotesDetailAPIView(APIView):
 
         serializer = NotesDetailSerializer(note)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
     def put(self, request, note_id, format=None):
         try:
             note = NotesModel.objects.get(id=note_id)
