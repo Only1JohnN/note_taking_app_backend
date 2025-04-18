@@ -17,18 +17,26 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from the appropriate .env file
-load_dotenv()  # This will load environment variables from the .env file
+
+# Check if the environment is set (defaults to 'development' if not set)
+ENVIRONMENT = os.getenv('DJANGO_ENV', 'development')
+
+
+# Load the corresponding .env file based on the environment
+dotenv_path = BASE_DIR / f".env.{ENVIRONMENT}"  # This loads either .env.development or .env.production
+load_dotenv(dotenv_path)
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your_default_secret_key')  # Uses .env value or fallback
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your_default_secret_key')  # Fallback if not set
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# This checks if the environment variable DEBUG is explicitly 'True'
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# Allowable hosts for both local and production
+# Allowable hosts
 ALLOWED_HOSTS = ['note-taker-jshi.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
@@ -76,52 +84,55 @@ TEMPLATES = [
 WSGI_APPLICATION = 'note_taking_app.wsgi.application'
 
 
-
 # Check what environment is set (default to 'development')
+# We are using DJANGO_ENV to specify the current environment (e.g., development or production).
+# If not specified, it defaults to 'development'.
 ENVIRONMENT = os.getenv("DJANGO_ENV", "development")
 
-# Load the corresponding .env file based on the environment
-dotenv_path = BASE_DIR / f".env.{ENVIRONMENT}"  # This will load .env.development or .env.production
+# Load the corresponding .env file based on the environment (either .env.development or .env.production)
+dotenv_path = BASE_DIR / f".env.{ENVIRONMENT}"  # This loads the appropriate .env file for the environment
 load_dotenv(dotenv_path)
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-# Switches DB between SQLite (for local development) and Postgres (for production)
+# Here we switch the database engine based on the environment.
+# In development, we use SQLite, but in production, we use PostgreSQL.
 import dj_database_url
 
 if DEBUG:
+    # Development uses SQLite (local development only)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',     # Local SQLite DB for development
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',  # Database file is located in the BASE_DIR
         }
     }
 else:
+    # Production uses PostgreSQL (or any other DB defined in DATABASE_URL)
     DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))  # Production/Postgres DB
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))  # Production/Postgres DB, URL is in .env.production
     }
 
 # Extra production-specific security settings
 if not DEBUG:
-    # Allow only secure HTTPS headers if behind a proxy (e.g., Render)
+    # Force secure headers when behind a proxy (e.g., Render or Heroku)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    # Trusted origins for CSRF protection
+    # CSRF settings: to prevent attacks on production, define trusted origins
     CSRF_TRUSTED_ORIGINS = ['https://note-taker-jshi.onrender.com']
 
-    # Ensure secure cookies (optional but recommended)
+    # Secure cookies for session and CSRF protection (recommended for production)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-    # XSS and content-type protections
+    # XSS protection and content sniffing prevention
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+# These settings help enforce secure password policies
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -140,12 +151,13 @@ USE_TZ = True
 
 # Static and Media Files
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+# These settings define how static files (like CSS/JS) and media files (uploads) are handled
 STATIC_URL = 'static/'  # URL for static files
 MEDIA_URL = '/media/'   # URL for uploaded media files
-MEDIA_ROOT = BASE_DIR / 'media'  # Path to store uploaded media
+MEDIA_ROOT = BASE_DIR / 'media'  # Path to store uploaded media (e.g., user images)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where collectstatic will copy static files for production
 
-# WhiteNoise storage for better static file serving in production
+# WhiteNoise storage for better static file serving in production (optimized for performance)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
