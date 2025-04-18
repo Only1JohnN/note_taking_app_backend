@@ -16,7 +16,7 @@ urlpatterns = [
     path('notes/delete/<int:pk>/', NotesDetailAPIView.as_view(), name='note-delete'),  # Delete a specific note by pk
     
     # Tags route handled by the router (uses TagViewSet)
-    path('tags/', include(router.urls)),
+    path('', include(router.urls)),
     
     # For views.py
     # path('notes/', NotesListAPIView.as_view(), name='notes-list'),
