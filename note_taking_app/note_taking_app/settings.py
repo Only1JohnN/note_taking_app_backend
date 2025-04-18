@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     # 'corsheaders',
-    'Notes',
+    'note_taking_app/Notes',
     'taggit',
 ]
 
