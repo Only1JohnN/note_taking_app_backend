@@ -38,7 +38,7 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['note-taker.onrender.com']
+ALLOWED_HOSTS = ['note-taker-jshi.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
