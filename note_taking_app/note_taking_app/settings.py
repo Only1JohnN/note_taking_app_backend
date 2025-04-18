@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=qcc^q^2iqnwurtn$3!i)@tbd+ns$8fm9%#ogs$^s(f$l9u^e-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['note-taker.onrender.com']
 
