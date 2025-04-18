@@ -1,56 +1,48 @@
-from rest_framework.views import APIView
-from rest_framework import viewsets
+# Function-Based View
+
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
 from .models import NotesModel
 from .serializers import NotesSerializer, NotesDetailSerializer, TagSerializer
 from taggit.models import Tag
 
 
-class NotesListAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        data = request.data
-        serializer = NotesSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
+@api_view(["POST", "GET"])
+def notes_list(request):
+    if request.method == "POST":
+        serializer = NotesSerializer(data=request.data)
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
     
-    def get(self, request, *args, **kwargs):
+    elif request.method == "GET":
         notes = NotesModel.objects.all()
         serializer = NotesSerializer(notes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class NotesDetailAPIView(APIView):
-    def get(self, request, note_id, *args, **kwargs):
-        try:
-            note = NotesModel.objects.get(id=note_id)
-        except NotesModel.DoesNotExist:
-            return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
+@api_view(["GET", "PUT", "DELETE"])
+def notes_detail(request, note_id):
+    try:
+        note = NotesModel.objects.get(id=note_id)
+    except NotesModel.DoesNotExist:
+        return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == "GET":
         serializer = NotesDetailSerializer(note)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def put(self, request, note_id, format=None):
-        try:
-            note = NotesModel.objects.get(id=note_id)
-        except NotesModel.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
+    elif request.method == "PUT":
         serializer = NotesDetailSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, note_id, format=None):
-        try:
-            note = NotesModel.objects.get(id=note_id)
-        except NotesModel.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
+    elif request.method == "DELETE":
         note.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -58,17 +50,17 @@ class NotesDetailAPIView(APIView):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    
 
-# class TagListAPIView(APIView):
+
+# @api_view(["GET", "POST"])
+# def tag_list_create(request):
 #     """Handles listing and creating tags"""
-
-#     def get(self, request):
+#     if request.method == "GET":
 #         tags = Tag.objects.all()
 #         serializer = TagSerializer(tags, many=True)
 #         return Response(serializer.data)
 
-#     def post(self, request):
+#     elif request.method == "POST":
 #         serializer = TagSerializer(data=request.data)
 #         if serializer.is_valid():
 #             serializer.save()
@@ -76,38 +68,25 @@ class TagViewSet(viewsets.ModelViewSet):
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class TagDetailAPIView(APIView):
+# @api_view(["GET", "PUT", "DELETE"])
+# def tag_detail(request, tag_id):
 #     """Handles retrieving, updating, and deleting a tag"""
+#     try:
+#         tag = Tag.objects.get(id=tag_id)
+#     except Tag.DoesNotExist:
+#         return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
 
-#     def get_object(self, tag_id):
-#         try:
-#             return Tag.objects.get(id=tag_id)
-#         except Tag.DoesNotExist:
-#             return None
-
-#     def get(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
-
+#     if request.method == "GET":
 #         serializer = TagSerializer(tag)
 #         return Response(serializer.data)
 
-#     def put(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
-
+#     elif request.method == "PUT":
 #         serializer = TagSerializer(tag, data=request.data)
 #         if serializer.is_valid():
 #             serializer.save()
 #             return Response(serializer.data)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#     def delete(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
-
+#     elif request.method == "DELETE":
 #         tag.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)

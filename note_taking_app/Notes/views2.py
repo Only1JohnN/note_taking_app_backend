@@ -1,3 +1,5 @@
+# from rest_framework import permissions
+# from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -19,6 +21,9 @@ class NotesListAPIView(ListCreateAPIView):
 
 
 class NotesDetailAPIView(RetrieveUpdateDestroyAPIView):
+    
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
     queryset = NotesModel.objects.all()
     serializer_class = NotesDetailSerializer
     lookup_field = 'pk'
@@ -57,3 +62,15 @@ class NotesDetailAPIView(RetrieveUpdateDestroyAPIView):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+# class TagListCreateAPIView(ListCreateAPIView):
+#     """Handles listing and creating tags"""
+#     queryset = Tag.objects.all()
+#     serializer_class = TagSerializer
+
+
+# class TagRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+#     """Handles retrieving, updating, and deleting a tag"""
+#     queryset = Tag.objects.all()
+#     serializer_class = TagSerializer

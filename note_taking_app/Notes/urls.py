@@ -4,6 +4,7 @@ from .views2 import NotesListAPIView, NotesDetailAPIView, TagViewSet
 
 
 router = DefaultRouter()
+# router.register(r'notes', NotesViewSet, basename='notes')
 router.register(r'tags', TagViewSet)
 
 
