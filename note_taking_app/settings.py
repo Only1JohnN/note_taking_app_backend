@@ -11,38 +11,27 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# import os
-# SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your_default_secret_key')     #Not-in-use cos of dotenv
-
-
-import os
-from dotenv import load_dotenv
-
+# Load environment variables from the appropriate .env file
 load_dotenv()  # This will load environment variables from the .env file
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your_default_secret_key')
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
-
-
-
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your_default_secret_key')  # Uses .env value or fallback
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# This checks if the environment variable DEBUG is explicitly 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
+# Allowable hosts for both local and production
 ALLOWED_HOSTS = ['note-taker-jshi.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,16 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'Notes',
-    'taggit',
+    'rest_framework',     # Django REST framework for building APIs
+    'Notes',              # Your custom Notes app
+    'taggit',             # For tagging notes (if used)
 ]
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',        #WhiteNoise for static files -- MUST come after django.middleware.security.SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files -- MUST come after django.middleware.security.SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,7 +60,7 @@ ROOT_URLCONF = 'note_taking_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [],  # Specify if you have custom template folders
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,70 +76,79 @@ TEMPLATES = [
 WSGI_APPLICATION = 'note_taking_app.wsgi.application'
 
 
+
+# Check what environment is set (default to 'development')
+ENVIRONMENT = os.getenv("DJANGO_ENV", "development")
+
+# Load the corresponding .env file based on the environment
+dotenv_path = BASE_DIR / f".env.{ENVIRONMENT}"  # This will load .env.development or .env.production
+load_dotenv(dotenv_path)
+
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-
-import os
+# Switches DB between SQLite (for local development) and Postgres (for production)
 import dj_database_url
 
 if DEBUG:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',     #For Development
+            'ENGINE': 'django.db.backends.sqlite3',     # Local SQLite DB for development
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 else:
     DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))        #For Production
+        'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))  # Production/Postgres DB
     }
 
+# Extra production-specific security settings
+if not DEBUG:
+    # Allow only secure HTTPS headers if behind a proxy (e.g., Render)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+    # Trusted origins for CSRF protection
+    CSRF_TRUSTED_ORIGINS = ['https://note-taker-jshi.onrender.com']
+
+    # Ensure secure cookies (optional but recommended)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # XSS and content-type protections
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static and Media Files
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-import os
-STATIC_URL = 'static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = 'static/'  # URL for static files
+MEDIA_URL = '/media/'   # URL for uploaded media files
+MEDIA_ROOT = BASE_DIR / 'media'  # Path to store uploaded media
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where collectstatic will copy static files for production
+
+# WhiteNoise storage for better static file serving in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

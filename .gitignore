@@ -17,6 +17,7 @@ __pycache__/
 *.pyo
 *.pyd
 .env
+.env*
 .venv
 db.sqlite3
 /node_modules/
