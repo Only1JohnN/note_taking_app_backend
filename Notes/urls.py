@@ -17,12 +17,12 @@ urlpatterns = [
     # path('notes/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-detail'),
     # path('notes/update/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-update'),
     # path('notes/delete/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-delete'),
-    path('', include(router.urls)),
+    path('tags/', include(router.urls)),
     
     # For views2.py
     # path('notes/', NotesListAPIView.as_view(), name='notes-list'),
     path('notes/<int:pk>/', NotesDetailAPIView.as_view(), name='note-detail'),
     path('notes/update/<int:pk>/', NotesDetailAPIView.as_view(), name='note-update'),
     path('notes/delete/<int:pk>/', NotesDetailAPIView.as_view(), name='note-delete'),
-    # path('', include(router.urls)),
+    # path('tags/', include(router.urls)),
 ]
