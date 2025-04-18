@@ -1,3 +1,5 @@
+# APIView for Notes and Tags
+
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -55,59 +57,54 @@ class NotesDetailAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    
+class TagListAPIView(APIView):
+    """Handles listing and creating tags"""
 
-# class TagListAPIView(APIView):
-#     """Handles listing and creating tags"""
+    def get(self, request):
+        tags = Tag.objects.all()
+        serializer = TagSerializer(tags, many=True)
+        return Response(serializer.data)
 
-#     def get(self, request):
-#         tags = Tag.objects.all()
-#         serializer = TagSerializer(tags, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request):
-#         serializer = TagSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        serializer = TagSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class TagDetailAPIView(APIView):
-#     """Handles retrieving, updating, and deleting a tag"""
+class TagDetailAPIView(APIView):
+    """Handles retrieving, updating, and deleting a tag"""
 
-#     def get_object(self, tag_id):
-#         try:
-#             return Tag.objects.get(id=tag_id)
-#         except Tag.DoesNotExist:
-#             return None
+    def get_object(self, tag_id):
+        try:
+            return Tag.objects.get(id=tag_id)
+        except Tag.DoesNotExist:
+            return None
 
-#     def get(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
+    def get(self, request, tag_id):
+        tag = self.get_object(tag_id)
+        if not tag:
+            return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
 
-#         serializer = TagSerializer(tag)
-#         return Response(serializer.data)
+        serializer = TagSerializer(tag)
+        return Response(serializer.data)
 
-#     def put(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
+    def put(self, request, tag_id):
+        tag = self.get_object(tag_id)
+        if not tag:
+            return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
 
-#         serializer = TagSerializer(tag, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = TagSerializer(tag, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#     def delete(self, request, tag_id):
-#         tag = self.get_object(tag_id)
-#         if not tag:
-#             return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self, request, tag_id):
+        tag = self.get_object(tag_id)
+        if not tag:
+            return Response({"error": "Tag not found"}, status=status.HTTP_404_NOT_FOUND)
 
-#         tag.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+        tag.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

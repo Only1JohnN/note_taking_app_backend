@@ -1,3 +1,5 @@
+# GenericAPIView for Notes and Tags
+
 # from rest_framework import permissions
 # from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView

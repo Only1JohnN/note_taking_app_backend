@@ -20,21 +20,14 @@ class NotesRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = NotesDetailSerializer
     lookup_field = "pk"
 
-
-class TagViewSet(viewsets.ModelViewSet):
-    """Handles CRUD operations for tags."""
+class TagListCreateAPIView(generics.ListCreateAPIView):
+    """Handles listing and creating tags"""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
-# class TagListCreateAPIView(ListCreateAPIView):
-#     """Handles listing and creating tags"""
-#     queryset = Tag.objects.all()
-#     serializer_class = TagSerializer
-
-
-# class TagRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-#     """Handles retrieving, updating, and deleting a tag"""
-#     queryset = Tag.objects.all()
-#     serializer_class = TagSerializer
+class TagRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """Handles retrieving, updating, and deleting a tag"""
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
