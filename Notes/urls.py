@@ -10,7 +10,7 @@ router.register(r'tags', TagViewSet)
 
 urlpatterns = [
     # For views2.py - The paths for notes (CRUD operations)
-    path('notes', NotesListAPIView.as_view(), name='home'),  # Default view to show the list of notes
+    path('', NotesListAPIView.as_view(), name='home'),  # Default view to show the list of notes
     path('notes/<int:pk>/', NotesDetailAPIView.as_view(), name='note-detail'),  # Retrieve a specific note by pk
     path('notes/update/<int:pk>/', NotesDetailAPIView.as_view(), name='note-update'),  # Update a specific note by pk
     path('notes/delete/<int:pk>/', NotesDetailAPIView.as_view(), name='note-delete'),  # Delete a specific note by pk
