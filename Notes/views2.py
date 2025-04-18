@@ -13,12 +13,10 @@ from taggit.models import Tag
 class NotesPagination(PageNumberPagination):
     page_size = 3  # Customize the number of items per page
 
-
 class NotesListAPIView(ListCreateAPIView):
-    queryset = NotesModel.objects.all()
+    queryset = NotesModel.objects.all().order_by('-created_at')  # Or any other preferred field
     serializer_class = NotesSerializer
     pagination_class = NotesPagination
-
 
 class NotesDetailAPIView(RetrieveUpdateDestroyAPIView):
     
