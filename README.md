@@ -37,7 +37,7 @@ This is the backend of a **Note-Taking Application** built with Django and Djang
 
 1. **Clone the Repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Only1JohnN/note_taking_app_backend
    cd note_taking_app_backend
    ```
 
