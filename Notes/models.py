@@ -1,6 +1,7 @@
 from django.db import models
 from taggit.managers import TaggableManager
 from django.core.validators import MinLengthValidator
+from django.utils import timezone
 
 class NotesModel(models.Model):
     title = models.CharField(
@@ -15,6 +16,9 @@ class NotesModel(models.Model):
         validators=[MinLengthValidator(10)]  # Minimum length of 10 characters
     )
     tags = TaggableManager()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+    
