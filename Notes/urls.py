@@ -9,6 +9,9 @@ router.register(r'tags', TagViewSet)
 
 
 urlpatterns = [
+    # Root URL points to a view or a list of notes
+    path('', NotesListAPIView.as_view(), name='home'),  # Default view
+    
     # For views.py
     path('notes/', NotesListAPIView.as_view(), name='notes-list'),
     # path('notes/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-detail'),
