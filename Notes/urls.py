@@ -10,19 +10,19 @@ router.register(r'tags', TagViewSet)
 
 urlpatterns = [
     # Root URL points to a view or a list of notes
-    path('', NotesListAPIView.as_view(), name='home'),  # Default view
+    path('', NotesListAPIView.as_view(), name='home'),  # Default view to show the list of notes
+    
+    # For views2.py - The paths for notes (CRUD operations)
+    path('notes/<int:pk>/', NotesDetailAPIView.as_view(), name='note-detail'),  # Retrieve a specific note by pk
+    path('notes/update/<int:pk>/', NotesDetailAPIView.as_view(), name='note-update'),  # Update a specific note by pk
+    path('notes/delete/<int:pk>/', NotesDetailAPIView.as_view(), name='note-delete'),  # Delete a specific note by pk
+    
+    # Tags route handled by the router (uses TagViewSet)
+    path('tags/', include(router.urls)),
     
     # For views.py
-    path('notes/', NotesListAPIView.as_view(), name='notes-list'),
+    # path('notes/', NotesListAPIView.as_view(), name='notes-list'),
     # path('notes/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-detail'),
     # path('notes/update/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-update'),
     # path('notes/delete/<int:note_id>/', NotesDetailAPIView.as_view(), name='note-delete'),
-    path('tags/', include(router.urls)),
-    
-    # For views2.py
-    # path('notes/', NotesListAPIView.as_view(), name='notes-list'),
-    path('notes/<int:pk>/', NotesDetailAPIView.as_view(), name='note-detail'),
-    path('notes/update/<int:pk>/', NotesDetailAPIView.as_view(), name='note-update'),
-    path('notes/delete/<int:pk>/', NotesDetailAPIView.as_view(), name='note-delete'),
-    # path('tags/', include(router.urls)),
 ]
